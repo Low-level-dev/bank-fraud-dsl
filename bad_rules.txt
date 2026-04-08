@@ -1,0 +1,11 @@
+// This file tests error detection in the DSL compiler
+
+// Missing semicolon after action
+rule "Bad Rule No Semicolon" {
+    if amount > 1000 then flag as FRAUD
+}
+
+// Unknown action type
+rule "Bad Action" {
+    if amount > 500 then flag as INVALID_TYPE;
+}

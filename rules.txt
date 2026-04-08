@@ -1,0 +1,64 @@
+// ─────────────────────────────────────────────────────────────────
+//  Bank Fraud Detection Rules  —  samples/rules.txt
+//
+//  LANGUAGE REFERENCE
+//  ──────────────────
+//  rule "Rule Name" {
+//      if <condition> then <action>;
+//  }
+//
+//  CONDITIONS:
+//    field op value                  e.g.  amount > 100000
+//    cond and cond                   e.g.  amount > 1000 and country != "BD"
+//    cond or  cond                   e.g.  hour < 5 or hour > 22
+//    not cond                        e.g.  not country == "BD"
+//    (cond)                          e.g.  (amount > 500 and hour < 4)
+//    field exceeds N within M min    e.g.  frequency exceeds 5 within 10 min
+//
+//  FIELDS:     amount | country | hour | frequency | txn_type | account
+//  OPERATORS:  >  <  >=  <=  ==  !=
+//  ACTIONS:    flag as FRAUD | flag as SUSPICIOUS | flag as REVIEW | block | allow
+// ─────────────────────────────────────────────────────────────────
+
+
+// ── Rule 1: Confirmed fraud — large amount going abroad ──
+rule "Large Foreign Transfer" {
+    if amount > 100000 and country != "BD"
+    then flag as FRAUD;
+}
+
+// ── Rule 2: Card velocity attack (rapid fire transactions) ──
+rule "Rapid Fire Transactions" {
+    if frequency exceeds 5 within 10 min
+    then block;
+}
+
+// ── Rule 3: Late night large cash withdrawal ──
+rule "Nighttime Large Withdrawal" {
+    if amount > 50000 and hour < 5 and txn_type == "WITHDRAWAL"
+    then flag as SUSPICIOUS;
+}
+
+// ── Rule 4: Moderate foreign transaction — needs human review ──
+rule "Foreign Transaction Review" {
+    if amount > 20000 and country != "BD"
+    then flag as REVIEW;
+}
+
+// ── Rule 5: Abnormally large local transfer ──
+rule "Large Local Transfer" {
+    if amount > 500000 and country == "BD"
+    then flag as REVIEW;
+}
+
+// ── Rule 6: Extreme velocity locally ──
+rule "Extreme Local Velocity" {
+    if frequency exceeds 10 within 10 min
+    then block;
+}
+
+// ── Rule 7: Smurfing pattern (small amounts, dead of night) ──
+rule "Late Night Small Transfers" {
+    if (amount < 10000 and amount > 1000) and hour < 4
+    then flag as SUSPICIOUS;
+}

@@ -1,0 +1,26 @@
+name: Build and Run Fraud Engine
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc flex bison make
+
+      - name: Build project
+        run: make
+
+      - name: Run fraud engine
+        run: ./fraud_engine samples/rules.txt samples/transactions.csv

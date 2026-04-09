@@ -1,0 +1,36 @@
+// Bank Fraud Detection Rules
+
+rule "Large Foreign Transfer" {
+    if amount > 100000 and country != "BD"
+    then flag as FRAUD;
+}
+
+rule "Rapid Fire Transactions" {
+    if frequency exceeds 5 within 10 min
+    then block;
+}
+
+rule "Nighttime Large Withdrawal" {
+    if amount > 50000 and hour < 5 and txn_type == "WITHDRAWAL"
+    then flag as SUSPICIOUS;
+}
+
+rule "Foreign Transaction Review" {
+    if amount > 20000 and country != "BD"
+    then flag as REVIEW;
+}
+
+rule "Large Local Transfer" {
+    if amount > 500000 and country == "BD"
+    then flag as REVIEW;
+}
+
+rule "Extreme Local Velocity" {
+    if frequency exceeds 10 within 10 min
+    then block;
+}
+
+rule "Late Night Small Transfers" {
+    if (amount < 10000 and amount > 1000) and hour < 4
+    then flag as SUSPICIOUS;
+}

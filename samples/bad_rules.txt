@@ -1,0 +1,6 @@
+// This file tests error detection in the DSL compiler
+
+// Missing semicolon after action - this should cause a syntax error
+rule "Bad Rule No Semicolon" {
+    if amount > 1000 then flag as FRAUD
+}
